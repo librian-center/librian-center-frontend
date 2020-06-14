@@ -1,0 +1,159 @@
+head:
+    meta http-equiv="Content-Type" content="text/html; charset=utf-8";
+    meta name="Description" content="一起来玩吧！"; 
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149850319-1"></script>
+    <script>window.dataLayer = window.dataLayer || [];  function gtag(){dataLayer.push(arguments);}  gtag('js', new Date());  gtag('config', 'UA-149850319-1'); </script>
+    link href='http://librian.it/librian.ico' rel="shortcut icon";
+    link rel='stylesheet' href='https://synthetic.librian.it/synthetic.css'; 
+    link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/5.13.0/css/all.css" rel="stylesheet";
+    script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js":
+    link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.2.12/dist/index.css";
+    script src="https://cdn.jsdelivr.net/npm/vditor@3.2.12/dist/index.min.js":
+    script src="./dist/bundle.js":
+    
+    title:
+        Librian center
+body.synth:
+    div#all:
+        header.synth:
+            div.左: 
+                div.标:
+                    Librian center
+                template v-if='当前页!="警告"':
+                    a.sq 翻页='首页': 
+                        首页
+            div.右: 
+                template v-if='当前页!="警告"':
+                    template v-if='用户信息':
+                        <a class='sq'><i class="far fa-bell"></i></a>
+                        img.小头像 v-bind:src='头像容器 + 用户信息["小头像"]' v-if='用户信息["小头像"]';
+                        img.小头像 src='./图/咸鱼人X.png' v-else;
+                        div.弹出框:
+                            div.雪:
+                                a#进入个人中心:
+                                    i.fas.fa-wheelchair:
+                                    个人中心
+                                hr.syn;
+                                a#退出:
+                                    i.fas.fa-power-off:
+                                    退出
+                    template v-else:
+                        a.sq#登录:
+                        a.sq#注册:
+        div.页.警告 v-if='当前页=="警告"':
+            div:
+                h2:
+                    i.fa.fa-warning:
+                    注意！
+                p:
+                    这个网页没有色情内容！
+                p:
+                    如果你已满18岁的话请不要进入！
+                br;
+                a.synth 翻页='首页':
+                    我是萝莉
+                a.synth 翻页='首页':
+                    我未满18岁
+        div.页.首页 v-if='当前页=="首页"':
+            div.内容:
+                div.左:
+                    h3:
+                        推荐
+                    img.synth src='https://rimosto.blob.core.windows.net/rimo-disk/75010585_p0.webp' width='50%';
+                    p:
+                        (首页推荐算法还没写，先推荐猫娘凑合一下)
+                    br;
+                div.右: 
+                    h3:
+                        广告
+                    img src='https://rimosto.blob.core.windows.net/rimo-disk/接私活.webp' width='100%';
+            div style='text-align:center;':
+                © 2020 | Rimo | MPL-2.0
+        div.页.个人中心 v-if='当前页=="个人中心"':
+            div.信息 v-if='查看的用户信息!=null':
+                img.synth.大头像 v-bind:src='头像容器 + 查看的用户信息["大头像"]' v-if='查看的用户信息["大头像"]';
+                img.synth.大头像 src='./图/咸鱼人X.png' v-else;
+                div.信息右边栏: 
+                    div.名字:
+                        {{查看的用户信息['名字']}}
+                    div.rk:
+                        {{查看的用户信息['rk']}}
+                    div.邮箱 v-if="查看的用户信息['公开邮箱']":
+                        i.fa.fa-envelope-o:
+                        {{查看的用户信息['公开邮箱']}}
+                    div.简介 v-if="查看的用户信息['简介']":
+                        i.fa.fa-envelope-o:
+                        {{查看的用户信息['简介']}}
+                    a.synth#我改我自己 翻页='修改资料' v-if='用户信息!=null && 查看的用户信息["RowKey"]==用户信息["RowKey"]':
+            hr.syn;
+            div.动态栏 v-if='查看的用户信息!=null':
+                div:
+                    h3 style='display: inline-block;':
+                        动态
+                    a.synth 翻页='写文章' v-if='用户信息!=null && 查看的用户信息["RowKey"]==用户信息["RowKey"]':
+                        ＋
+                div v-if='查看的用户动态==null':
+                    加载中……
+                div v-else-if='查看的用户动态.length==0':
+                    并没有动态。
+                div v-else:
+                    template v-for='i in 查看的用户动态':
+                        div.synth.动态 template v-if='i.事件类型':
+                            template v-if='i.事件类型=="文章"':
+                                div.动态头:
+                                    div.左:
+                                        a target='_blank' v-bind:href=' "?人=" + i.PartitionKey + "&事件=" + i.RowKey +"#读文章" ':
+                                            template v-if='i.文件类型=="md"':
+                                                i.fab.fa-markdown style='opacity: 0.5':
+                                            template v-else:
+                                                {{i.文件类型}}
+                                            {{i.标题}}
+                                    div.右:
+                                        {{i.PartitionKey}} 于 {{相对时间(i.时间)}}
+                                div:
+                                    {{i.摘要}}
+                    span v-if='查看的用户动态[查看的用户动态.length-1].事件类型':
+                        没有了
+                    a.synth#加载更多动态 v-else:
+                        加载更多
+        div.页.修改资料 v-if='当前页=="修改资料"':
+            template v-if='用户信息!=null':
+                div.行:
+                    div:
+                        头像
+                    div.原:
+                        img.synth.中头像 v-bind:src='头像容器 + 用户信息["大头像"]' v-if='用户信息["大头像"]';
+                        img.synth.中头像 src='./图/咸鱼人X.png' v-else;
+                    input#头像文件上传 type='file' style='display:none';
+                    a#修改头像.synth:
+                        修改
+                div.行 v-for='i in ["名字", "简介", "公开邮箱", "邮箱"]':
+                    div:
+                        {{i}}
+                    div.原:
+                        {{用户信息[i]}}
+                    # a.synth:
+                    #     修改
+        div.页.写文章 v-if='当前页=="写文章"':
+            div.标题:
+                input.synth type='text' placeholder='标题';
+            div.摘要:
+                input.synth type='text' placeholder='摘要';
+            div.选项:
+            div.内容:
+                div.synth#vditor onload='alert(9)':
+            div.底部 style='text-align:center':
+                a.synth#发布文章: 
+            br; 
+        div.页.读文章 v-show='当前页=="读文章"':
+            template v-if='读的文章!=null':
+                h2.标题:
+                    {{读的文章.标题}}
+                div.作者: 
+                    {{读的文章.PartitionKey}}
+                div#读文章内容:
+                br;
+                p.时间:
+                    发布于 {{读的文章.时间}}
+                br;
+                br;

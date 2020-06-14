@@ -1,0 +1,196 @@
+body 
+    font-size: 1.25vw
+    line-height: 2.0
+    text-shadow: 1px 1px 0.25vw #FFF, -1px -1px 0.25vw #FFF
+    overflow-x: hidden
+
+a
+    color: inherit
+    cursor: pointer
+    text-decoration: none
+    
+@supports (color: -webkit-link)
+    .vditor-reset a
+        color: -webkit-link
+@supports (color: -moz-hyperlinktext)
+    .vditor-reset a
+        color: -moz-hyperlinktext
+
+a.sq
+    padding: 0.1em 0.5em
+    transition: box-shadow 0.3s
+    border-radius: 0.6em
+    &:hover
+        box-shadow: 0px 0px 2px #000
+        transition: box-shadow 0s
+    &:active
+        box-shadow: 0px 0px 3px #000
+        transition: box-shadow 0s
+        
+a:empty
+    &::after
+        content: attr(id)
+
+a.synth 
+    padding: 0px 1.6vw
+    font-size: 125%
+
+header.synth
+    display: flex
+    justify-content: space-between
+    padding-left: 0.7em
+    height: 3em
+    &>.左
+        display: flex
+        align-items: center
+        &>.标
+            font-size: 120%
+            margin-right: 3em
+    &>.右
+        display: flex
+        position: relative
+        align-items: center
+        &>*
+            margin: 0 1em
+        .弹出框
+            width: 0
+            height: 0
+            position: absolute
+            right: 0
+            bottom: 0
+            visibility: hidden
+            opacity: 0
+            transition: visibility 0s 1s, opacity 0.7s 0.3s
+            .雪
+                transform: translate(-95%, 1em)
+                text-align: center
+                width: 8em
+                padding: 0.5em 0
+                border-radius: 1vw
+                box-shadow: 0px 0px 1vw rgba(0, 0, 0, 0.4)
+                border: 1px solid #777
+                background: rgba(255, 220, 185, 0.5)
+        .弹出框:hover, .小头像:hover~.弹出框
+            visibility: visible
+            opacity: 1
+            transition: visibility 0s 0s, opacity 0.3s 0s
+
+img
+    &.小头像
+        width: 2.4vw
+        height: 2.4vw
+        border-radius: 20%
+    &.中头像
+        width: 8vw
+        height: 8vw
+    &.大头像
+        width: 16vw
+        height: 16vw
+    
+.页
+    width: 100%
+    
+.页.警告
+    margin-top: 5%
+    display: flex
+    justify-content: center
+    align-items: center
+    text-align: center
+    font-size: 165%
+    
+.页.首页
+    width: 80%
+    margin-left: 10%
+    .内容
+        display: flex
+        justify-content: space-between
+        .左
+            width: 80%
+        .右
+            width: 20%
+
+.页.个人中心
+    width: 80%
+    margin-left: 10%
+    .信息
+        display: flex
+        margin: 1em 0
+        .信息右边栏
+            flex-grow: 1
+            margin-left: 2em
+            display: inline-block
+            position: relative
+            .名字
+                font-size: 250%
+            .rk
+                opacity: 0.65
+            a#我改我自己
+                position: absolute
+                right: 0
+                bottom: 0
+
+.页.修改资料
+    width: 80%
+    margin-left: 10%
+    .行
+        display: flex
+        align-items: center
+        >*:first-child
+            width: 20%
+        >.原
+            flex-grow: 1
+        border-bottom: 1px solid rgba(120, 50, 0, 0.5)
+        padding: 2em 0
+
+.页.写文章
+    width: 90%
+    margin-left: 5%
+    .标题
+        margin: 1em
+        input
+            font-size: 175%
+            width: 100%
+    .摘要
+        margin: 1em
+        input
+            font-size: 125%
+            width: 100%
+    .内容
+        margin: 2em
+
+.页.读文章
+    width: 80%
+    margin-left: 10%
+    
+
+.动态栏
+    >div:first-child
+        display: flex
+        justify-content: space-between
+        align-items: center
+    .动态
+        margin-bottom: 0.8em
+        .动态头
+            display: flex
+            justify-content: space-between
+            
+h1
+    font-size: 340%
+    font-weight: normal
+
+h2
+    font-size: 150%
+    font-weight: normal
+    margin-block-start: 0.4em
+
+
+.vditor-reset--anchor.vditor-reset
+    padding-left: 0
+    color: inherit
+    font-family: inherit
+    font-size: inherit
+    line-height: inherit
+    h2
+        border-bottom: 1px solid rgba(120, 50, 0, 0.5)
+    code:not(.hljs):not(.highlight-chroma)
+        background-color: rgba(0, 0, 0, 0.075)
