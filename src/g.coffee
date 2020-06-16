@@ -6,6 +6,7 @@ import './样式.sass'
 
 
 服务器地址 = 'https://librian-center.azurewebsites.net/api/ember?code=vspk07OGnowc/DJiueZ96F/4mtXbGGj1qpnS0m03mgiwznVx/91gJg=='
+存储地址 = 'https://rimosto-cdn.azureedge.net'
 window.太阳交换 = ->
     console.log '「太阳交换」'
     服务器地址 = 'http://localhost:7071/api/ember'
@@ -311,7 +312,7 @@ $ ->
     window.v = new Vue
         el: '#all'
         data:
-            头像容器: 'https://rimosto.blob.core.windows.net/avatar/'
+            头像容器: 存储地址 + '/avatar/'
             当前页: '警告'
             用户信息: null
             查看的用户信息: null
