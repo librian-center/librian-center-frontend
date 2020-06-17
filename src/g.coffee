@@ -192,7 +192,7 @@ window.本地存储 = new Proxy({} ,
 
 翻页处理器 = 
     个人中心: ({rk}) ->
-        $('title').html(rk + ' - 个人中心')
+        $('title').text(rk + ' - 个人中心')
         [信息, status_code] = await 同调呼唤.查询基本信息(RowKey: rk)
         if status_code==200
             v.查看的用户信息 = 信息
@@ -221,7 +221,7 @@ window.本地存储 = new Proxy({} ,
             return 
         else
             v.读的文章 = 信息
-            $('title').html(信息.标题)
+            $('title').text(信息.标题)
             v.$nextTick ->
                 Vditor.preview(document.getElementById('读文章内容'),
                     信息.关联文件内容,
@@ -243,7 +243,7 @@ window.本地存储 = new Proxy({} ,
 
 翻页 = (目标页, 参数表={}, push=true) ->
     console.log '「翻页」', 目标页, 参数表
-    $('title').html('Librian会所')
+    $('title').text('Librian会所')
     查询字符串 = ''
     if Object.keys(参数表).length > 0
         查询参数 = new URLSearchParams()
