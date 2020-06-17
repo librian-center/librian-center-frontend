@@ -19,6 +19,7 @@ if window.location.protocol=='file:'
             aj = (callback) ->
                 data = Object.assign(d,
                     'f': f
+                    '灵牌': 本地存储.灵牌
                 )
                 $.ajax(
                     method: 'post'
@@ -48,13 +49,12 @@ window.本地存储 = new Proxy({} ,
 
 
 同步用户信息 = ->
-    灵牌 = 本地存储.灵牌
-    if not 灵牌
+    if not 本地存储.灵牌
         本地存储.用户信息 = null
         v.用户信息 = null
         return
-    RowKey = 灵牌['RowKey']
-    [信息, status_code] = await 同调呼唤.查询详细信息({RowKey, 灵牌} )
+    RowKey = 本地存储.灵牌['RowKey']
+    [信息, status_code] = await 同调呼唤.查询详细信息({RowKey})
     if status_code!=200
         v.用户信息 = null
         return
@@ -148,7 +148,7 @@ window.本地存储 = new Proxy({} ,
                     Swal.showLoading()
             reader = new FileReader()
             reader.onload = (e) ->
-                [信息, status_code] = await 同调呼唤.修改头像({流: e.target.result, 灵牌: 本地存储.灵牌} )
+                [信息, status_code] = await 同调呼唤.修改头像({流: e.target.result})
                 if status_code == 200
                     Swal.fire
                         text: '好了。'
@@ -176,7 +176,6 @@ window.本地存储 = new Proxy({} ,
             标题: $('.写文章 .标题 input').val()
             摘要: $('.写文章 .摘要 input').val()
             内容: window.vditor.getValue()
-            灵牌: 本地存储.灵牌
         } )
         if status_code == 200
             Swal.fire
@@ -193,6 +192,7 @@ window.本地存储 = new Proxy({} ,
 
 翻页处理器 = 
     个人中心: ({rk}) ->
+        $('title').html(rk + ' - 个人中心')
         [信息, status_code] = await 同调呼唤.查询基本信息(RowKey: rk)
         if status_code==200
             v.查看的用户信息 = 信息
@@ -221,6 +221,7 @@ window.本地存储 = new Proxy({} ,
             return 
         else
             v.读的文章 = 信息
+            $('title').html(信息.标题)
             v.$nextTick ->
                 Vditor.preview(document.getElementById('读文章内容'),
                     信息.关联文件内容,
@@ -242,6 +243,7 @@ window.本地存储 = new Proxy({} ,
 
 翻页 = (目标页, 参数表={}, push=true) ->
     console.log '「翻页」', 目标页, 参数表
+    $('title').html('Librian会所')
     查询字符串 = ''
     if Object.keys(参数表).length > 0
         查询参数 = new URLSearchParams()
@@ -313,7 +315,7 @@ $ ->
         el: '#all'
         data:
             头像容器: 存储地址 + '/avatar/'
-            当前页: '警告'
+            当前页: null
             用户信息: null
             查看的用户信息: null
             查看的用户动态: null
@@ -343,7 +345,11 @@ $ ->
         v.用户信息 = 本地存储.用户信息
     
     [url, 问, 井] = 获取当前url()
-    if 问!='' or 井!=''
+    if 井!=''
         回光返照()
+    if 问=='' and 井==''
+        翻页('警告')
+    if 问!='' and 井==''
+        alert '这你也能上？？？'
     
     同步用户信息()
