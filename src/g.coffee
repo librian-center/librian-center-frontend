@@ -15,25 +15,45 @@ if window.location.protocol=='file:'
 
 同调呼唤 = new Proxy({} ,
     get: (_, f) ->
-        q = (d) ->
+        q = (data) ->
             aj = (callback) ->
-                data = Object.assign(d,
-                    'f': f
-                    '灵牌': 本地存储.灵牌
-                )
+                if data==undefined
+                    data = {}
+                data.f = f
+                if 本地存储.灵牌
+                    data.灵牌 = 本地存储.灵牌
                 $.ajax(
                     method: 'post'
                     url: 服务器地址
                     data: JSON.stringify(data)
                     complete: (result, _) ->
                         console.log '「result」', result.responseText
-                        r = JSON.parse(result.responseText)
+                        if result.responseText != undefined
+                            r = JSON.parse(result.responseText)
                         status_code = result.status
                         callback([r, status_code])
                 )
             [r, status_code] = await new Promise (resolve) ->
                 aj(resolve)
             return [r, status_code]
+        return q
+)
+
+
+window.同调融合 = new Proxy({} ,
+    get: (_, f) ->
+        q = (d) ->
+            console.log "<同调融合>(#{f})", d
+            [r, status_code] = await 同调呼唤[f](d)
+            if status_code==200
+                return r
+            else
+                Swal.fire
+                    title: '坏了'
+                    text: "[#{status_code}]#{r}"
+                    icon: 'error'
+                throw '坏了'
+                return 
         return q
 )
 
@@ -54,12 +74,8 @@ window.本地存储 = new Proxy({} ,
         v.用户信息 = null
         return
     RowKey = 本地存储.灵牌['RowKey']
-    [信息, status_code] = await 同调呼唤.查询详细信息({RowKey})
-    if status_code!=200
-        v.用户信息 = null
-        return
-    v.用户信息 = 信息
-    本地存储.用户信息 = 信息
+    v.用户信息 = await 同调融合.查询详细信息({RowKey})
+    本地存储.用户信息 = v.用户信息
 
 按钮表 =
     登录: ->
@@ -76,7 +92,7 @@ window.本地存储 = new Proxy({} ,
                 RowKey = $('#swal-input1').val()
                 密码 = $('#swal-input2').val()
                 邮箱 = $('#swal-input3').val()
-                [信息, status_code] = await 同调呼唤.登录({RowKey, 密码} )
+                [信息, status_code] = await 同调呼唤.登录({RowKey, 密码})
                 if status_code == 200
                     return 信息
                 else
@@ -100,7 +116,7 @@ window.本地存储 = new Proxy({} ,
                 RowKey = $('#swal-input1').val()
                 密码 = $('#swal-input2').val()
                 邮箱 = $('#swal-input3').val()
-                [信息, status_code] = await 同调呼唤.注册({RowKey, 密码, 邮箱} )
+                [信息, status_code] = await 同调呼唤.注册({RowKey, 密码, 邮箱})
                 if status_code == 200
                     return 信息
                 else
@@ -121,12 +137,10 @@ window.本地存储 = new Proxy({} ,
                 计数 += 1
                 if 计数 > 5
                     break
-                [信息, status_code] = await 同调呼唤.查询事件详细({
+                v.查看的用户动态[i] = await 同调融合.查询事件详细({
                     PartitionKey: 事件.PartitionKey,
                     RowKey: 事件.RowKey
-                } )
-                if status_code == 200
-                    v.查看的用户动态[i] = 信息
+                })
         t = v.查看的用户动态
         v.查看的用户动态 = []
         v.查看的用户动态 = t
@@ -148,15 +162,10 @@ window.本地存储 = new Proxy({} ,
                     Swal.showLoading()
             reader = new FileReader()
             reader.onload = (e) ->
-                [信息, status_code] = await 同调呼唤.修改头像({流: e.target.result})
-                if status_code == 200
-                    Swal.fire
-                        text: '好了。'
-                        icon: 'success'
-                else
-                    Swal.fire
-                        text: '坏了。'
-                        icon: 'error'
+                await 同调融合.修改头像({流: e.target.result})
+                Swal.fire
+                    text: '好了。'
+                    icon: 'success'
                 同步用户信息()
             reader.readAsBinaryString(文件)
             $(this).val('')
@@ -171,64 +180,44 @@ window.本地存储 = new Proxy({} ,
             title: '正在上传中……',
             onBeforeOpen: ->
                 Swal.showLoading()
-        [信息, status_code] = await 同调呼唤.写文章({
+        await 同调融合.写文章({
             文件类型: 'md'
             标题: $('.写文章 .标题 input').val()
             摘要: $('.写文章 .摘要 input').val()
             内容: window.vditor.getValue()
-        } )
-        if status_code == 200
-            Swal.fire
-                text: '好了。'
-                icon: 'success'
-        else
-            Swal.fire
-                text: '坏了。'
-                icon: 'error'
+        })
 
     进入个人中心: ->
         翻页('个人中心', {rk: v.用户信息.RowKey})
 
 
 翻页处理器 = 
+    首页: () ->
+        v.推荐用户 = []
+        v.推荐用户 = await 同调融合.获得推荐用户()
     个人中心: ({rk}) ->
         $('title').text(rk + ' - 个人中心')
-        [信息, status_code] = await 同调呼唤.查询基本信息(RowKey: rk)
-        if status_code==200
-            v.查看的用户信息 = 信息
-        else
-            v.查看的用户信息 = null
-            Swal.fire
-                text: '坏了。'
-                icon: 'error'
-            return
         v.查看的用户动态 = null
-        [信息, status_code] = await 同调呼唤.查询用户事件({用户rk: v.查看的用户信息['RowKey']})
-        v.查看的用户动态 = 信息
+        v.查看的用户信息 = await 同调融合.查询基本信息(RowKey: rk)
+        v.查看的用户动态 = await 同调融合.查询用户事件({用户rk: v.查看的用户信息['RowKey']})
         按钮表.加载更多动态()
     写文章: () ->
         v.$nextTick ->
             vditor启动()
     读文章: ({人, 事件}) ->
-        [信息, status_code] = await 同调呼唤.查询事件究极({
+        信息 = await 同调融合.查询事件究极({
             PartitionKey: 人
             RowKey: 事件
         })
-        if status_code!=200
-            Swal.fire
-                text: '坏了。'
-                icon: 'error'
-            return 
-        else
-            v.读的文章 = 信息
-            $('title').text(信息.标题)
-            v.$nextTick ->
-                Vditor.preview(document.getElementById('读文章内容'),
-                    信息.关联文件内容,
-                    {
-                        anchor: 1
-                    }
-                )
+        v.读的文章 = 信息
+        $('title').text(信息.标题)
+        v.$nextTick ->
+            Vditor.preview(document.getElementById('读文章内容'),
+                信息.关联文件内容,
+                {
+                    anchor: 1
+                }
+            )
 
 获取当前url = ->
     base = window.location.origin + window.location.pathname
@@ -320,6 +309,7 @@ $ ->
             查看的用户信息: null
             查看的用户动态: null
             读的文章: null
+            推荐用户: []
         methods:
             相对时间: (t) ->
                 时间差 = Date.now() / 1000 - t

@@ -10,7 +10,6 @@ head:
     link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.2.12/dist/index.css";
     script src="https://cdn.jsdelivr.net/npm/vditor@3.2.12/dist/index.min.js":
     script src="./dist/bundle.js":
-    
     title:
         Librian center
 body.synth:
@@ -67,6 +66,15 @@ body.synth:
                     h3:
                         广告
                     img src='https://rimosto.blob.core.windows.net/rimo-disk/接私活.webp' width='100%';
+                    h3:
+                        推荐用户
+                    div.推荐用户: 
+                        div.用户小牌 v-for='用户 in 推荐用户':
+                            a.sq0 target='_blank' v-bind:href=' "?rk=" + 用户.RowKey + "#个人中心" ':
+                                img v-bind:src='头像容器 + 用户["小头像"]';
+                                div:
+                                    {{用户.RowKey}}
+
             div style='text-align:center;':
                 © 2020 | Rimo | MPL-2.0
         div.页.个人中心 v-if='当前页=="个人中心"':
