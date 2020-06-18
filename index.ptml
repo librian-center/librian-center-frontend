@@ -144,12 +144,12 @@ body.synth:
                     #     修改
         div.页.写文章 v-if='当前页=="写文章"':
             div.标题:
-                input.synth type='text' placeholder='标题';
+                input.synth type='text' placeholder='标题' v-model='写的文章.标题';
             div.摘要:
-                input.synth type='text' placeholder='摘要';
+                input.synth type='text' placeholder='摘要' v-model='写的文章.摘要';
             div.选项:
             div.内容:
-                div.synth#vditor onload='alert(9)':
+                div.syn#vditor onload='alert(9)':
             div.底部 style='text-align:center':
                 a.synth#发布文章: 
             br; 
@@ -162,6 +162,10 @@ body.synth:
                 div#读文章内容:
                 br;
                 p.时间:
-                    发布于 {{读的文章.时间}}
+                    发布于 {{时间格式化(读的文章.时间)}}
+                template v-if='用户信息!=null && 读的文章.PartitionKey==用户信息.RowKey':
+                    a.synth v-bind:href=' "?人=" + 当前页参数表.人 + "&事件=" + 当前页参数表.事件 + "#写文章"':
+                        修改文章
+                    a.synth#删除文章:
                 br;
                 br;

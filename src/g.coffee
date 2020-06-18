@@ -101,6 +101,7 @@ window.本地存储 = new Proxy({} ,
             if result.value
                 本地存储.灵牌 = result.value
                 同步用户信息()
+
     注册: ->
         Swal.fire
             title: '注册'
@@ -185,11 +186,27 @@ window.本地存储 = new Proxy({} ,
             标题: $('.写文章 .标题 input').val()
             摘要: $('.写文章 .摘要 input').val()
             内容: window.vditor.getValue()
+            键: [v.当前页参数表.人, v.当前页参数表.事件] if v.当前页参数表.人
         })
+        Swal.fire
+            text: '好了。'
+            icon: 'success'
+        .then ->
+            翻页('个人中心', {rk: v.用户信息.RowKey})
 
     进入个人中心: ->
         翻页('个人中心', {rk: v.用户信息.RowKey})
 
+    删除文章: ->
+        await 同调融合.删除事件({
+            PartitionKey: v.当前页参数表.人
+            RowKey: v.当前页参数表.事件
+        })
+        Swal.fire
+            text: '好了。'
+            icon: 'success'
+        .then ->
+            翻页('个人中心', {rk: v.用户信息.RowKey})
 
 翻页处理器 = 
     首页: () ->
@@ -201,9 +218,14 @@ window.本地存储 = new Proxy({} ,
         v.查看的用户信息 = await 同调融合.查询基本信息(RowKey: rk)
         v.查看的用户动态 = await 同调融合.查询用户事件({用户rk: v.查看的用户信息['RowKey']})
         按钮表.加载更多动态()
-    写文章: () ->
+    写文章: ({人, 事件}) ->
+        if 人!=undefined
+            v.写的文章 = await 同调融合.查询事件究极({
+                PartitionKey: 人
+                RowKey: 事件
+            })
         v.$nextTick ->
-            vditor启动()
+            vditor启动(v.写的文章.关联文件内容)
     读文章: ({人, 事件}) ->
         信息 = await 同调融合.查询事件究极({
             PartitionKey: 人
@@ -242,8 +264,8 @@ window.本地存储 = new Proxy({} ,
     [url, 问, 井] = 获取当前url()
     if push
         history.pushState(null, null, url +  查询字符串 + '#' + 目标页)
-    
     v.当前页 = 目标页
+    v.当前页参数表 = 参数表
     if 目标页 of 翻页处理器
         翻页处理器[目标页](参数表)
 
@@ -261,7 +283,7 @@ window.addEventListener('popstate', (e) ->
 , false)
 
 
-vditor启动 = () ->
+vditor启动 = (markdown) ->
     toolbar = [
         'headings', 'bold', 'italic', 'strike', 'link', '|',
         'list', 'ordered-list', 'check', 'outdent', 'indent', '|',
@@ -295,7 +317,11 @@ vditor启动 = () ->
         tab: '\t'
         cache: 
             enable: false
+        after: ->
+            if markdown
+                window.vditor.setValue(markdown)
     })
+    
 
 
 $ ->
@@ -305,12 +331,18 @@ $ ->
         data:
             头像容器: 存储地址 + '/avatar/'
             当前页: null
+            当前页参数表: {}
             用户信息: null
             查看的用户信息: null
             查看的用户动态: null
+            写的文章: 
+                标题: ''
+                摘要: ''
             读的文章: null
             推荐用户: []
         methods:
+            时间格式化: (t) ->
+                return new Date(t*1000) + ''
             相对时间: (t) ->
                 时间差 = Date.now() / 1000 - t
                 if 时间差 < 60

@@ -211,14 +211,14 @@
         </div>
         <div class="页 写文章" v-if='当前页=="写文章"'>
             <div class="标题">
-                <input class="synth" type='text' placeholder='标题'/>
+                <input class="synth" type='text' placeholder='标题' v-model='写的文章.标题'/>
             </div>
             <div class="摘要">
-                <input class="synth" type='text' placeholder='摘要'/>
+                <input class="synth" type='text' placeholder='摘要' v-model='写的文章.摘要'/>
             </div>
             <div class="选项"></div>
             <div class="内容">
-                <div class="synth" id="vditor" onload='alert(9)'></div>
+                <div class="syn" id="vditor" onload='alert(9)'></div>
             </div>
             <div class="底部" style='text-align:center'>
                 <a class="synth" id="发布文章"></a>
@@ -236,8 +236,14 @@
                 <div id="读文章内容"></div>
                 <br/>
                 <p class="时间">
-                    发布于 {{读的文章.时间}}
+                    发布于 {{时间格式化(读的文章.时间)}}
                 </p>
+                <template v-if='用户信息!=null && 读的文章.PartitionKey==用户信息.RowKey'>
+                    <a class="synth" v-bind:href=' "?人=" + 当前页参数表.人 + "&事件=" + 当前页参数表.事件 + "#写文章"'>
+                        修改文章
+                    </a>
+                    <a class="synth" id="删除文章"></a>
+                </template>
                 <br/>
                 <br/>
             </template>
