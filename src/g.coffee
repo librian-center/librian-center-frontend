@@ -9,7 +9,7 @@ import './样式.sass'
 存储地址 = 'https://rimosto-cdn.azureedge.net'
 window.太阳交换 = ->
     console.log '「太阳交换」'
-    服务器地址 = 'http://localhost:7071/api/ember'
+    服务器地址 = 'http://localhost:7071/api/ember?'
 if window.location.protocol=='file:'
     太阳交换()
 
@@ -285,7 +285,7 @@ window.addEventListener('popstate', (e) ->
 
 vditor启动 = (markdown) ->
     toolbar = [
-        'headings', 'bold', 'italic', 'strike', 'link', '|',
+        'headings', 'bold', 'italic', 'strike', 'link', 'upload', '|',
         'list', 'ordered-list', 'check', 'outdent', 'indent', '|',
         'quote', 'line', 'code', 'inline-code', 'insert-before', 'insert-after', '|',
         'table', '|',
@@ -317,6 +317,22 @@ vditor启动 = (markdown) ->
         tab: '\t'
         cache: 
             enable: false
+        upload:
+            accept: 'image/*'
+            max: 5 * 1024 * 1024
+            url: "#{服务器地址}&f=上传图片"
+            extraData: 
+                '灵牌': JSON.stringify(本地存储.灵牌)
+            format: (files, responseText) ->
+                md5 = JSON.parse(responseText)
+                return JSON.stringify({  
+                    "msg": "",
+                    "code": 0,
+                    "data": 
+                        "errFiles": [],
+                        "succMap":
+                            "我是图.webp": "#{存储地址}/image/#{md5}",
+                })
         after: ->
             if markdown
                 window.vditor.setValue(markdown)
