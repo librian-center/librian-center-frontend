@@ -5,7 +5,7 @@
 ## 相关内容
     
 + 网站  
-    <https://center.librian.it/>
+    <https://center.librian.net/>
 
 + 后端  
     <https://github.com/librian-center/librian-center-backend>
