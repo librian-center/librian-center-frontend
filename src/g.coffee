@@ -10,8 +10,8 @@ import './样式.sass'
 window.太阳交换 = ->
     console.log '「太阳交换」'
     服务器地址 = 'http://localhost:7071/api/ember?'
-if window.location.protocol=='file:'
-    太阳交换()
+# if window.location.protocol=='file:'
+#     太阳交换()
 
 同调呼唤 = new Proxy({} ,
     get: (_, f) ->
@@ -43,7 +43,7 @@ if window.location.protocol=='file:'
 window.同调融合 = new Proxy({} ,
     get: (_, f) ->
         q = (d) ->
-            console.log "<同调融合>(#{f})", d
+            console.log "<同调融合>#{f}，参数 =", d
             [r, status_code] = await 同调呼唤[f](d)
             if status_code==200
                 return r
@@ -210,7 +210,7 @@ window.本地存储 = new Proxy({} ,
 
 翻页处理器 = 
     首页: () ->
-        v.推荐用户 = []
+        v.推荐用户 = null
         v.推荐用户 = await 同调融合.获得推荐用户()
     个人中心: ({rk}) ->
         $('title').text(rk + ' - 个人中心')
@@ -339,7 +339,6 @@ vditor启动 = (markdown) ->
     })
     
 
-
 $ ->
     console.log 'nya!'
     window.v = new Vue
@@ -355,7 +354,7 @@ $ ->
                 标题: ''
                 摘要: ''
             读的文章: null
-            推荐用户: []
+            推荐用户: null
         methods:
             时间格式化: (t) ->
                 return new Date(t*1000) + ''

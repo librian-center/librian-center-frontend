@@ -4,7 +4,8 @@ module.exports = {
     entry: './src/g.coffee',
     output: {
         path: path.resolve(__dirname, 'dist'),
-        filename: 'bundle.js'
+        filename: 'bundle.js',
+        publicPath: './dist/',
     },
     module: {
         rules: [{
@@ -12,7 +13,16 @@ module.exports = {
             use: ['coffee-loader']
         }, {
             test: /\.sass$/,
-            use: ['style-loader', 'css-loader', 'sass-loader']
+            use: [
+                { loader: 'style-loader', options: { injectType: 'linkTag' } },
+                {
+                    loader: 'file-loader', options: {
+                        name: function (file) { return '[name].css' },
+                    }
+                },
+                { loader: 'resolve-url-loader', options: {} },
+                { loader: 'sass-loader', options: { sourceMap: true } }
+            ]
         }],
     },
     // mode: 'development',

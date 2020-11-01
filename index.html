@@ -96,7 +96,10 @@
                         推荐用户
                     </h3>
                     <div class="推荐用户">
-                        <div class="用户小牌" v-for='用户 in 推荐用户'>
+                        <div v-if='推荐用户===null'>
+                            加载中……
+                        </div>
+                        <div class="用户小牌" v-for='用户 in 推荐用户' v-else>
                             <a class="sq0" target='_blank' v-bind:href=' "?rk=" + 用户.RowKey + "#个人中心" '>
                                 <img v-bind:src='头像容器 + 用户["小头像"]'/>
                                 <div>
