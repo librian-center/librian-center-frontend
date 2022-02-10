@@ -16,7 +16,7 @@
     "jquery": "^3.4.1",
     "jquery-browserify": "^1.8.1",
     "jquery-mousewheel": "^3.1.13",
-    "node-sass": "^4.13.0",
+    "node-sass": "^7.0.0",
     "resolve-url-loader": "^3.1.0",
     "sass-loader": "^8.0.0",
     "style-loader": "^1.0.0",
